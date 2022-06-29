@@ -97,12 +97,20 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		AddUser(w, r)
 	}
+	if r.Method == "PUT" {
+		tempId, _ := strconv.Atoi(Id)
+		UpdateUser(w, r, tempId)
+	}
 }
 
 func GetUserById(w http.ResponseWriter, r *http.Request, id int) {
-	test, _ := json.Marshal(users[id])
-	w.Header().Add("Content-Type", "application/json")
-	w.Write(test)
+	for _, value := range users {
+		if value.Id == id {
+			user, _ := json.Marshal(value)
+			w.Header().Add("Content-Type", "application/json")
+			w.Write(user)
+		}
+	}
 }
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
@@ -131,6 +139,29 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	if err := decoder.Decode(&user); err != nil {
 		w.Write([]byte("error decoding json body"))
 		return
+	} else {
+		users[len(users)+1] = user
+		w.Header().Add("Content-Type", "application/json")
+		w.Write([]byte("User added successfully"))
 	}
-	users[len(users)+1] = user
+}
+
+func UpdateUser(w http.ResponseWriter, r *http.Request, id int) {
+	decoder := json.NewDecoder(r.Body)
+	var temp entity.User
+	if err := decoder.Decode(&temp); err != nil {
+		w.Write([]byte("error decoding json body"))
+		return
+	}
+
+	for _, value := range users {
+		if value.Id == id {
+			temp.Id = id
+			users[value.Id] = temp
+
+			w.Header().Add("Content-Type", "application/json")
+			w.Write([]byte("User updated successfully"))
+		}
+	}
+
 }
