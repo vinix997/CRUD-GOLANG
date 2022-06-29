@@ -48,10 +48,9 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", greet)
-	r.HandleFunc("/register", register)
-	r.HandleFunc("/user", UserHandler)
-	r.HandleFunc("/user/{Id}", UserHandler)
-	r.HandleFunc("/user/{Id}", UserHandler)
+	r.HandleFunc("/users", UserHandler)
+	r.HandleFunc("/users/{Id}", UserHandler)
+	r.HandleFunc("/users/{Id}", UserHandler)
 
 	http.Handle("/", r)
 	http.ListenAndServe(PORT, nil)
